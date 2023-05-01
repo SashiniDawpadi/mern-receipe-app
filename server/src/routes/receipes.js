@@ -26,7 +26,8 @@ router.post("/", async (req, res) => {
 })
 
 router.put("/", async (req, res) => {
-    {userId, receipeId}
+    const receipe = await ReceipeModel.findById(req.body.receipeID);
+    const user = await UserMode.findById(req.body.userID);
     try { 
         const response = await receipe.save({});
         res.json(response)
