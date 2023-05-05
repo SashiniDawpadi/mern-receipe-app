@@ -2,9 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 import { useGetUserID } from "../hooks/useGetUserID";
 import {useNavigate} from "react-router-dom"
+import { useCookies } from "react-cookie";
 
 export const CreateReceipe = () => {
   const userID = useGetUserID();
+  const [cookies,_] = useCookies(["access_token"])
   const [receipe, setReceipe] = useState({
     name: "",
     ingredients: [],
@@ -36,7 +38,7 @@ export const CreateReceipe = () => {
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post("http://localhost:3001/receipes", receipe);
+      await axios.post("http://localhost:3001/receipes", receipe,{headers:{authorization :cookies.access_token}});
         alert("Receipe created successfully");
         navigate("/")
     } catch (err) {

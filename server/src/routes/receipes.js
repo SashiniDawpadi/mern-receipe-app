@@ -2,6 +2,7 @@ import express from "express"
 import mongoose from "mongoose";
 import { ReceipeModel } from "../models/Receipes.js";
 import { UserModel } from "../models/Users.js";
+import { verifyToken } from "./users.js";
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.get("/", async (req, res) => {
     }
 })
 
-router.post("/", async (req, res) => {
+router.post("/",verifyToken, async (req, res) => {
     const receipe = new ReceipeModel(req.body)
     try { 
         const response = await receipe.save({});
@@ -26,7 +27,7 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.put("/", async (req, res) => {
+router.put("/", verifyToken, async (req, res) => {
    
     try { 
         const receipe = await ReceipeModel.findById(req.body.receipeID);
@@ -40,10 +41,10 @@ router.put("/", async (req, res) => {
     }
 })
 
-router.get("/savedReceipes/ids", async (req, res) => {
+router.get("/savedReceipes/ids/:userID", async (req, res) => {
    
     try { 
-        const user = await UserModel.findById(req.body.userID)
+        const user = await UserModel.findById(req.params.userID)
         res.json({savedReceipes: user ?.savedReceipes})
     }
     catch (err) {
@@ -51,10 +52,10 @@ router.get("/savedReceipes/ids", async (req, res) => {
     }
 })
 
-router.get("/savedReceipes", async (req, res) => {
+router.get("/savedReceipes/:userID", async (req, res) => {
    
     try { 
-        const user = await UserModel.findById(req.body.userID)
+        const user = await UserModel.findById(req.params.userID)
         const savedReceipes = await ReceipeModel.find({
             _id: { $in: user.savedReceipes },
         });
